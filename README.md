@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="mailto:srikaanth0912@gmail.com"><img src="https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white" alt="Email"></a>
+  <a href="https://mail.google.com/mail/?view=cm&fs=1&to=srikaanth0912@gmail.com"><img src="https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white" alt="Email"></a>
   <a href="https://www.linkedin.com/in/srikaanth-g-9b6553296"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
 </p>
 
