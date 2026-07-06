@@ -22,10 +22,10 @@
 ### Certifications
 
 - Google Cloud Cybersecurity Certificate
-- Getting Started with Threat Intelligence and Hunting
-- Security Operations Center in Practice
-- AI Fluency Framework & Foundations
-- Claude 101
+- IBM SkillsBuild: Getting Started with Threat Intelligence and Hunting
+- IBM SkillsBuild: Security Operations Center in Practice
+- Anthropic: AI Fluency Framework & Foundations
+- Anthropic: Claude 101
 
 ### GitHub Stats
 
