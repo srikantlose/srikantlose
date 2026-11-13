@@ -55,6 +55,10 @@ button{font:inherit;color:inherit}
   box-shadow:inset -4px -4px 0 rgba(0,0,0,.28),inset 4px 4px 0 rgba(255,255,255,.28),0 0 0 4px var(--ink),0 8px 0 4px var(--ink);
   transform:translateY(0);transition:transform 80ms steps(2)}
 .btn:hover{transform:translateY(-3px)}
+/* Things that lift on hover keep covering the spot they rose from, so the
+   cursor can't fall off the bottom edge and make them flicker. */
+.btn,.items button{position:relative}
+.btn:hover::before,.mon:hover::before,.items button:hover::before{content:"";position:absolute;left:0;right:0;bottom:-8px;height:8px}
 .btn:active{transform:translateY(4px);box-shadow:inset -4px -4px 0 rgba(0,0,0,.28),inset 4px 4px 0 rgba(255,255,255,.28),0 0 0 4px var(--ink),0 4px 0 4px var(--ink)}
 .btn.big{font-size:clamp(12px,2vw,18px);padding:18px 26px}
 .win{position:relative;background:var(--panel);padding:22px;
@@ -67,12 +71,12 @@ button{font:inherit;color:inherit}
 .menu h2{margin:0 0 12px 14px;font-size:10px;color:var(--silver);font-weight:400}
 .menu ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
 .menu button,.menu a{display:block;width:100%;text-align:left;background:none;border:0;padding:10px 10px 10px 34px;cursor:pointer;position:relative;text-decoration:none}
-.menu button:hover,.menu a:hover{background:rgba(255,255,255,.06)}
+.menu button:hover,.menu a:hover,.menu .cursor{background:rgba(255,255,255,.06)}
 .menu [aria-current="true"]{background:rgba(255,255,255,.1);color:var(--accent)}
-.menu [aria-current="true"]::before{content:"";position:absolute;left:12px;top:50%;width:8px;height:14px;margin-top:-7px;
+.menu .cursor::before{content:"";position:absolute;left:12px;top:50%;width:8px;height:14px;margin-top:-7px;
   background:var(--cursor) center/contain no-repeat;animation:blink .9s steps(1,end) infinite}
 .menu .quit{color:var(--silver);font-size:10px;margin-top:8px}
-.panel{flex:1;min-width:0;--frame:var(--sky);max-height:calc(100vh - 150px);overflow:auto;scrollbar-color:var(--slate) var(--deep)}
+.panel{flex:1;min-width:0;--frame:var(--sky);height:min(640px,calc(100vh - 150px));overflow:auto;scrollbar-color:var(--slate) var(--deep)}
 .panel h2{margin:0 0 18px;font-size:16px;font-weight:400;color:var(--accent);text-shadow:3px 3px 0 var(--ink)}
 .panel h3{margin:22px 0 10px;font-size:11px;font-weight:400;color:var(--cyan)}
 .wipe{animation:wipe .28s steps(4,end)}
@@ -157,8 +161,8 @@ button{font:inherit;color:inherit}
   .menu{flex:none;width:100%}
   .menu ul{grid-template-columns:repeat(3,1fr)}
   .menu button,.menu a{padding-left:28px;font-size:10px}
-  .menu [aria-current="true"]::before{left:8px}
-  .panel{max-height:none;width:100%;overflow:visible}
+  .menu .cursor::before{left:8px}
+  .panel{height:auto;width:100%;overflow:visible}
   html,body{overflow:auto}
   #hud .keys{display:none}
   #title{margin-top:18vh}
@@ -633,9 +637,19 @@ function typewriter(pages) {
   };
 }
 
+// The ▶ cursor follows hover and focus; a view only opens on click or Enter.
+let pointed = -1;
+function point(i, sfx = false) {
+  if (i === pointed) return;
+  pointed = i;
+  menuBtns.forEach((b, j) => b.classList.toggle('cursor', j === i));
+  if (sfx) Sound.move();
+}
+
 function open(i, sfx = true) {
   cur = i;
   menuBtns.forEach((b, j) => b.setAttribute('aria-current', j === i));
+  point(i);
   if (typer) { typer.stop(); typer = null; }
   const id = VIEWS[i].id;
   panel.innerHTML = VIEW_HTML[id]();
@@ -688,8 +702,10 @@ menuBtns.forEach((b, i) => {
     if (typer) typer.advance();
     else { const f = panel.querySelector('a, button, [tabindex]'); if (f) f.focus(); }
   });
-  b.addEventListener('pointerenter', () => { if (i !== cur) open(i); });
+  b.addEventListener('pointerenter', () => point(i, true));
+  b.addEventListener('focus', () => point(i));
 });
+menu.addEventListener('pointerleave', () => point(menuBtns.indexOf(document.activeElement) >= 0 ? menuBtns.indexOf(document.activeElement) : cur));
 
 /* keyboard */
 const KONAMI = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a'];
